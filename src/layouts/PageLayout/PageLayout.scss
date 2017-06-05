@@ -1,0 +1,16 @@
+.page-layout__viewport {
+  padding-top: 4rem;
+}
+
+.page-layout__nav-item--active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+.game-container {
+  width:600px;
+  height:600px;
+  border: 1px solid #ccc;
+  box-shadow: 10px 13px 16px -9px rgba(0,0,0,0.47);
+  position: relative;
+  margin: 0 auto;
+}
