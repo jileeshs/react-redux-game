@@ -11,10 +11,10 @@ export default (store) => ({
           dependencies for bundling   */
       const Game = require('./containers/GameContainer').default
       const reducer = require('./modules/game').default
-
-      /*  Add the reducer to the store on key 'counter'  */
+      // const homeReducer = require('../Home/modules/home').default
+      /*  Add the reducer to the store on key 'game'  */
       injectReducer(store, { key: 'game', reducer })
-
+      // injectReducer(store, { key: 'home', homeReducer })
       /*  Return getComponent   */
       cb(null, Game)
 

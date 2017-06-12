@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { moveBall, makeBallActive, doubleAsync } from '../modules/game'
+import { moveBall, makeBallActive, createObjects } from '../modules/game'
 
 /*  This is a container component. Notice it does not contain any JSX,
     nor does it import React. This component is **only** responsible for
@@ -15,11 +15,12 @@ import Game from '../components/Game'
 const mapDispatchToProps = {
   moveBall,
   makeBallActive,
-  doubleAsync
+  createObjects
 }
 
 const mapStateToProps = (state) => ({
-  balls: state.game.balls
+  balls: state.game.balls,
+  numberOfObjects: state.home && state.home.numberOfObjects ? state.home.numberOfObjects : 0
 })
 
 /*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:

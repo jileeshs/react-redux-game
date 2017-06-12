@@ -37,6 +37,11 @@ class Ball extends React.Component {
   handleClick () {
     this.props.makeActive(this.props.index)
   }
+  shouldComponentUpdate (nextProps) {
+    return this.props.position !== nextProps.position ||
+      this.props.color !== nextProps.color ||
+      this.props.status !== nextProps.status
+  }
   render () {
     let myClassName = ''
     if (this.props.status === 'collided') {
@@ -48,10 +53,12 @@ class Ball extends React.Component {
   }
 }
 
-const { func, number, string } = PropTypes
+const { func, number, string, object } = PropTypes
 Ball.propTypes = {
   index: number,
   makeActive: func,
-  status: string
+  status: string,
+  position: object,
+  color: string
 }
 export default Ball

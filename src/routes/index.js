@@ -9,12 +9,11 @@ import GameRoute from './Game'
 export const createRoutes = (store) => ({
   path: '/',
   component: CoreLayout,
-  indexRoute: GameRoute(store),
-  // childRoutes : [
-  //   GameRoute(store)
-  // ]
+  indexRoute: Home(store),
+  childRoutes: [
+    GameRoute(store)
+  ]
 })
-
 
 /*  Note: childRoutes can be chunked or otherwise loaded programmatically
     using getChildRoutes with the following signature:

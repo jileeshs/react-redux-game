@@ -1,11 +1,10 @@
-import randomColor from 'randomcolor'
-
+import { randomObjects } from './createRandomObjects'
 // ------------------------------------
 // Constants
 // ------------------------------------
 export const MOVE_BALL = 'MOVE_BALL'
 export const MAKE_ACTIVE = 'MAKE_ACTIVE'
-export const COUNTER_DOUBLE_ASYNC = 'COUNTER_DOUBLE_ASYNC'
+export const CREATE_OBJECTS = 'CREATE_OBJECTS'
 
 const BOARD_SIZE = 600
 const BALL_DIMENSION = 30
@@ -27,60 +26,25 @@ export function makeBallActive (index) {
     payload: index
   }
 }
-
+export function createObjects (numberOfObjects) {
+  return {
+    type: CREATE_OBJECTS,
+    payload: numberOfObjects
+  }
+}
 
 export const actions = {
   moveBall,
-  makeBallActive
+  makeBallActive,
+  createObjects
 }
-const getDefaultState = ({ boardSize = 600 }) => {
-  let limit = 20
-  let amount = 10
-  let lowerBound = 1
-  let upperBound = boardSize - 30
-  let uniqueRandomNumbers = []
-
-  if (amount > limit) {
-    limit = amount
-  }
-  while (uniqueRandomNumbers.length < limit) {
-    // let randomNumber = Math.round(Math.random() * (upperBound - lowerBound) + lowerBound)
-    let randomNumber  = Math.floor(Math.random() * 20) * 30 + lowerBound;
-    // randomNumber = Math.ceil(randomNumber / 10) * 10
-    if (uniqueRandomNumbers.indexOf(randomNumber) === -1) {
-      uniqueRandomNumbers.push(randomNumber)
-    }
-  }
-  let colors = randomColor({count:limit})
-
-  return uniqueRandomNumbers.map((number, index) => {
-    // let randomNumber = Math.round(Math.random() * (upperBound - lowerBound) + lowerBound)
-    let randomNumber = Math.floor(Math.random() * 20) * 30 + lowerBound;
-    // randomNumber = Math.ceil(randomNumber / 10) * 10
-    return {
-      size: {
-        board: boardSize,
-        maxDim: boardSize
-      },
-      positions: {
-        player: {
-          top: number,
-          left: randomNumber
-        },
-        enemies: []
-      },
-      playerScore: 0,
-      timeElapsed: 0,
-      status: 'inactive',
-      color: colors[index]
-    }
-  })
+const getDefaultState = ({ boardSize = 600 }, numberOfObjects) => {
+  return randomObjects(600, Number(numberOfObjects))
 }
 const collideTop = (top, left, state) => {
-  return status =  state.balls.filter(ball => ball.inedex !== state.activeBall)
+  return status = state.balls.filter(ball => ball.inedex !== state.activeBall)
           .filter(ball => (ball.positions.player.left - BALL_DIMENSION < left) === (left < ball.positions.player.left + BALL_DIMENSION))
           .some(ball => (ball.positions.player.top + BALL_DIMENSION) === top)
-
 }
 const collideBottom = (top, left, state) => {
   return state.balls.filter(ball => ball.inedex !== state.activeBall)
@@ -106,8 +70,7 @@ const ACTION_HANDLERS = {
     let collision = false
     switch (action.payload.dir) {
       case 'UP':
-        if (top <= SPEED ||  collideTop(top, left, state))
-          collision = true
+        if (top <= SPEED || collideTop(top, left, state)) { collision = true }
         break
       case 'DOWN':
         if (top >= BOARD_SIZE - BALL_DIMENSION || collideBottom(top, left, state)) {
@@ -127,7 +90,7 @@ const ACTION_HANDLERS = {
       default:
         return state
     }
-    if(!collision) {
+    if (!collision) {
       return {
         ...state,
         balls: state.balls.map((ball, index) => index === state.activeBall
@@ -138,10 +101,10 @@ const ACTION_HANDLERS = {
               left: ball.positions.player.left + (SPEED * action.payload.left)
             } } } : ball)
       }
-    }else {
+    } else {
       return {
-      ...state,
-      balls: state.balls.map((ball, index) => index === state.activeBall
+        ...state,
+        balls: state.balls.map((ball, index) => index === state.activeBall
         ? { ...ball, status: 'collided' } : { ...ball, status: 'inactive' })
       }
     }
@@ -154,6 +117,14 @@ const ACTION_HANDLERS = {
         ? { ...ball, status: 'active' } : { ...ball, status: 'inactive' }),
       activeBall: action.payload
     }
+  },
+  [CREATE_OBJECTS]: (state, action) => {
+    return {
+      ...state,
+      activeBall: null,
+      previousBall: null,
+      balls: getDefaultState({}, action.payload)
+    }
   }
 }
 
@@ -161,7 +132,7 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-  balls: getDefaultState(BOARD_SIZE, 1),
+  balls: [],
   activeBall: null,
   previousBall: null
 }
