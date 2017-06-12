@@ -8,7 +8,6 @@ export const PageLayout = ({ children }) => (
     <h1>React Game</h1>
     <IndexLink to='/' activeClassName='page-layout__nav-item--active'>Home</IndexLink>
     {' · '}
-    <Link to='/counter' activeClassName='page-layout__nav-item--active'>Counter</Link>
     <div className='page-layout__viewport'>
       <div className='game-container'>
         {children}

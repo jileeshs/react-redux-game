@@ -1,0 +1,15 @@
+$cyan: #60daaa;
+$yellow: #fbca67;
+$orange: #ff8a30;
+$red: #f45e61;
+$purple: #6477b9;
+$blue: #0eb7da;
+
+@keyframes pulse {
+  from { box-shadow:0px 0px 10px 3px $cyan; }
+  to { box-shadow:0px 0px 20px 5px $red; }
+}
+
+.element {
+  animation: pulse .5s infinite alternate;
+}

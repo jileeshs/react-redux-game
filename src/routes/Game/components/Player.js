@@ -1,6 +1,6 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import Ball from 'components/Ball'
-
 class Player extends Component {
   handleKeyDown = (e) => {
     let newDirection
@@ -47,7 +47,7 @@ Player.propTypes = {
   handlePlayerMovement: PropTypes.func,
   status: PropTypes.string,
   color: PropTypes.string,
-  index: PropTypes.index,
+  index: PropTypes.number,
   position: PropTypes.shape({
     top: PropTypes.number,
     left: PropTypes.number

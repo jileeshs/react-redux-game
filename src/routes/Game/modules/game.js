@@ -1,9 +1,15 @@
+import randomColor from 'randomcolor'
+
 // ------------------------------------
 // Constants
 // ------------------------------------
 export const MOVE_BALL = 'MOVE_BALL'
 export const MAKE_ACTIVE = 'MAKE_ACTIVE'
 export const COUNTER_DOUBLE_ASYNC = 'COUNTER_DOUBLE_ASYNC'
+
+const BOARD_SIZE = 600
+const BALL_DIMENSION = 30
+const SPEED = 10
 
 // ------------------------------------
 // Actions
@@ -21,52 +27,36 @@ export function makeBallActive (index) {
     payload: index
   }
 }
-/*  This is a thunk, meaning it is a function that immediately
-    returns a function for lazy evaluation. It is incredibly useful for
-    creating async actions, especially when combined with redux-thunk! */
 
-export const doubleAsync = () => {
-  return (dispatch, getState) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        dispatch({
-          type: COUNTER_DOUBLE_ASYNC,
-          payload: getState().counter
-        })
-        resolve()
-      }, 200)
-    })
-  }
-}
 
 export const actions = {
   moveBall,
-  makeBallActive,
-  doubleAsync
+  makeBallActive
 }
 const getDefaultState = ({ boardSize = 600 }) => {
-  let limit = 10
+  let limit = 20
   let amount = 10
   let lowerBound = 1
-  let upperBound = boardSize-25
+  let upperBound = boardSize - 30
   let uniqueRandomNumbers = []
 
   if (amount > limit) {
     limit = amount
   }
   while (uniqueRandomNumbers.length < limit) {
-    let randomNumber = Math.round(Math.random() * (upperBound - lowerBound) + lowerBound)
-    randomNumber = Math.ceil(randomNumber / 5) * 5
+    // let randomNumber = Math.round(Math.random() * (upperBound - lowerBound) + lowerBound)
+    let randomNumber  = Math.floor(Math.random() * 20) * 30 + lowerBound;
+    // randomNumber = Math.ceil(randomNumber / 10) * 10
     if (uniqueRandomNumbers.indexOf(randomNumber) === -1) {
       uniqueRandomNumbers.push(randomNumber)
     }
   }
-  let colors = ['aqua', 'black', 'blue', 'fuchsia', 'gray', 'green',
-    'lime', 'maroon', 'navy', 'olive', 'orange', 'purple', 'red',
-    'silver', 'teal', 'white', 'yellow']
+  let colors = randomColor({count:limit})
+
   return uniqueRandomNumbers.map((number, index) => {
-    let randomNumber = Math.round(Math.random() * (upperBound - lowerBound) + lowerBound)
-    randomNumber = Math.ceil(randomNumber / 5) * 5
+    // let randomNumber = Math.round(Math.random() * (upperBound - lowerBound) + lowerBound)
+    let randomNumber = Math.floor(Math.random() * 20) * 30 + lowerBound;
+    // randomNumber = Math.ceil(randomNumber / 10) * 10
     return {
       size: {
         board: boardSize,
@@ -86,25 +76,26 @@ const getDefaultState = ({ boardSize = 600 }) => {
     }
   })
 }
-const checkForTop = (top, left, state) => {
-  return state.balls.filter(ball => ball.inedex !== state.activeBall)
-          .filter(ball => (ball.positions.player.left - 25 < left) === (left < ball.positions.player.left + 25))
-          .some(ball => (ball.positions.player.top + 25) === top)
+const collideTop = (top, left, state) => {
+  return status =  state.balls.filter(ball => ball.inedex !== state.activeBall)
+          .filter(ball => (ball.positions.player.left - BALL_DIMENSION < left) === (left < ball.positions.player.left + BALL_DIMENSION))
+          .some(ball => (ball.positions.player.top + BALL_DIMENSION) === top)
+
 }
-const checkForBottom = (top, left, state) => {
+const collideBottom = (top, left, state) => {
   return state.balls.filter(ball => ball.inedex !== state.activeBall)
-          .filter(ball => (ball.positions.player.left - 25 < left) === (left < ball.positions.player.left + 25))
-          .some(ball => (ball.positions.player.top - 25) === top)
+          .filter(ball => (ball.positions.player.left - BALL_DIMENSION < left) === (left < ball.positions.player.left + BALL_DIMENSION))
+          .some(ball => (ball.positions.player.top - BALL_DIMENSION) === top)
 }
-const checkForLeft = (top, left, state) => {
+const collideLeft = (top, left, state) => {
   return state.balls.filter(ball => ball.inedex !== state.activeBall)
-          .filter(ball => (ball.positions.player.top - 25 < top) === (top < ball.positions.player.top + 25))
-            .some(ball => (ball.positions.player.left + 25) === left)
+          .filter(ball => (ball.positions.player.top - BALL_DIMENSION < top) === (top < ball.positions.player.top + BALL_DIMENSION))
+            .some(ball => (ball.positions.player.left + BALL_DIMENSION) === left)
 }
-const checkForRight = (top, left, state) => {
+const collideRight = (top, left, state) => {
   return state.balls.filter(ball => ball.inedex !== state.activeBall)
-          .filter(ball => (ball.positions.player.top - 25 < top) === (top < ball.positions.player.top + 25))
-            .some(ball => (ball.positions.player.left - 25) === left)
+          .filter(ball => (ball.positions.player.top - BALL_DIMENSION < top) === (top < ball.positions.player.top + BALL_DIMENSION))
+            .some(ball => (ball.positions.player.left - BALL_DIMENSION) === left)
 }
 // ------------------------------------
 // Action Handlers
@@ -112,40 +103,47 @@ const checkForRight = (top, left, state) => {
 const ACTION_HANDLERS = {
   [MOVE_BALL]: (state, action) => {
     const { top, left } = state.balls[state.activeBall].positions.player
+    let collision = false
     switch (action.payload.dir) {
       case 'UP':
-        if (top <= 0) return state
-        else if (checkForTop(top, left, state)) {
-          return state
-        }
+        if (top <= SPEED ||  collideTop(top, left, state))
+          collision = true
         break
       case 'DOWN':
-        if (top >= 600 - 25) return state
-        else if (checkForBottom(top, left, state)) {
-          return state
+        if (top >= BOARD_SIZE - BALL_DIMENSION || collideBottom(top, left, state)) {
+          collision = true
         }
         break
       case 'LEFT':
-        if (left <= 0) return state
-        else if (checkForLeft(top, left, state)) {
-          return state
+        if (left <= SPEED || collideLeft(top, left, state)) {
+          collision = true
         }
         break
       case 'RIGHT':
-        if (left >= 600 - 25) return state
-        else if (checkForRight(top, left, state)) {
-          return state
+        if (left >= BOARD_SIZE - BALL_DIMENSION || collideRight(top, left, state)) {
+          collision = true
         }
         break
+      default:
+        return state
     }
-    return {
+    if(!collision) {
+      return {
+        ...state,
+        balls: state.balls.map((ball, index) => index === state.activeBall
+          ? { ...ball,
+            status: 'active',
+            positions: { player: {
+              top: ball.positions.player.top + (SPEED * action.payload.top),
+              left: ball.positions.player.left + (SPEED * action.payload.left)
+            } } } : ball)
+      }
+    }else {
+      return {
       ...state,
       balls: state.balls.map((ball, index) => index === state.activeBall
-        ? { ...ball,
-          positions: { player: {
-            top: ball.positions.player.top + (5 * action.payload.top),
-            left: ball.positions.player.left + (5 * action.payload.left)
-          } } } : ball)
+        ? { ...ball, status: 'collided' } : { ...ball, status: 'inactive' })
+      }
     }
   },
   [MAKE_ACTIVE]: (state, action) => {
@@ -163,7 +161,7 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-  balls: getDefaultState(600, 1),
+  balls: getDefaultState(BOARD_SIZE, 1),
   activeBall: null,
   previousBall: null
 }
