@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { moveBall, makeBallActive, createObjects } from '../modules/game'
+import { moveItem, makeItemActive, createObjects } from '../modules/game'
 
 /*  This is a container component. Notice it does not contain any JSX,
     nor does it import React. This component is **only** responsible for
@@ -13,13 +13,13 @@ import Game from '../components/Game'
     implementing our wrapper around increment; the component doesn't care   */
 
 const mapDispatchToProps = {
-  moveBall,
-  makeBallActive,
+  moveItem,
+  makeItemActive,
   createObjects
 }
 
 const mapStateToProps = (state) => ({
-  balls: state.game.balls,
+  items: state.game.items,
   numberOfObjects: state.home && state.home.numberOfObjects ? state.home.numberOfObjects : 0
 })
 

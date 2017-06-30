@@ -2,43 +2,78 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Stage from './Stage'
 import { goToPage } from '../../../util'
+import './Game.scss'
 
 class Game extends React.Component {
-
+  static propTypes = {
+    items: PropTypes.array,
+    makeItemActive: PropTypes.func.isRequired,
+    moveItem: PropTypes.func.isRequired,
+    numberOfObjects: PropTypes.number,
+    createObjects: PropTypes.func
+  }
+  constructor () {
+    super()
+    this.state = {
+      infoVisible: false
+    }
+    this.showHowTo = this.showHowTo.bind(this)
+  }
   componentDidMount () {
     if (this.props.numberOfObjects < 1) {
       goToPage('/')
     } else {
-      if (this.props.balls && Number(this.props.numberOfObjects) !== this.props.balls.length) { this.props.createObjects(this.props.numberOfObjects) }
+      if (this.props.items && Number(this.props.numberOfObjects) !== this.props.items.length) {
+        this.props.createObjects(this.props.numberOfObjects)
+      }
     }
   }
-
+  showHowTo () {
+    this.setState({
+      infoVisible: !this.state.infoVisible
+    })
+  }
+  hideHowTo () {
+    this.setState({
+      infoVisible: false
+    })
+  }
   render () {
     return (
       <div>
-        {this.props.numberOfObjects > 0 ? this.props.balls.map((ball, index) => {
+        <span className='show-how' onClick={this.showHowTo}>?</span>
+        {this.state.infoVisible
+          ? <div className='how-to-play callout bottom-right'>
+            <div>
+                Click on an object to activate it.
+                Use arrow keys to navigate
+            </div>
+            <section className='arrow-container'>
+              <i className='arrow right' />
+              <i className='arrow up' />
+              <i className='arrow down' />
+              <i className='arrow left' />
+            </section>
+          </div>
+          : ''
+        }
+
+        {this.props.numberOfObjects > 0 ? this.props.items.map((item, index) => {
           return (
             <Stage
               size={30}
               key={index}
               index={index}
-              makeActive={this.props.makeBallActive}
-              status={ball.status}
-              position={ball.positions.player}
-              handlePlayerMovement={this.props.moveBall}
-              color={ball.color} />
+              makeActive={this.props.makeItemActive}
+              status={item.status}
+              position={item.positions.player}
+              handlePlayerMovement={this.props.moveItem}
+              color={item.color} />
           )
         }) : 'null' }
       </div>
     )
   }
-}
-Game.propTypes = {
-  balls: PropTypes.array,
-  makeBallActive: PropTypes.func.isRequired,
-  moveBall: PropTypes.func.isRequired,
-  numberOfObjects: PropTypes.string,
-  createObjects: PropTypes.func
 }
 
 export default Game

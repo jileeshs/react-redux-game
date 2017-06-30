@@ -14,11 +14,11 @@ The primary goal of this project is to play around with React and Redux
 
 ## Installation
 
-After confirming that your environment meets the above [requirements](#requirements), you can create a new project based on `react-redux-starter-kit` by doing the following:
+After confirming that your environment meets the above [requirements](#requirements), you can clone the repo by doing the following:
 
 ```bash
-$ git clone https://github.com/jileeshs/react-redux-game.git <my-project-name>
-$ cd <my-project-name>
+$ git clone https://github.com/jileeshs/react-redux-game.git
+$ cd react-redux-game.
 ```
 
 When that's done, install the project dependencies. It is recommended that you use [Yarn](https://yarnpkg.com/) for deterministic dependency management, but `npm install` will suffice.
