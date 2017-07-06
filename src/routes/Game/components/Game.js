@@ -9,7 +9,7 @@ class Game extends React.Component {
     items: PropTypes.array,
     makeItemActive: PropTypes.func.isRequired,
     moveItem: PropTypes.func.isRequired,
-    numberOfObjects: PropTypes.number,
+    numberOfItems: PropTypes.number,
     createObjects: PropTypes.func
   }
   constructor () {
@@ -20,11 +20,11 @@ class Game extends React.Component {
     this.showHowTo = this.showHowTo.bind(this)
   }
   componentDidMount () {
-    if (this.props.numberOfObjects < 1) {
+    if (this.props.numberOfItems < 1) {
       goToPage('/')
     } else {
-      if (this.props.items && Number(this.props.numberOfObjects) !== this.props.items.length) {
-        this.props.createObjects(this.props.numberOfObjects)
+      if (this.props.items && Number(this.props.numberOfItems) !== this.props.items.length) {
+        this.props.createObjects(this.props.numberOfItems)
       }
     }
   }
@@ -58,7 +58,7 @@ class Game extends React.Component {
           : ''
         }
 
-        {this.props.numberOfObjects > 0 ? this.props.items.map((item, index) => {
+        {this.props.numberOfItems > 0 ? this.props.items.map((item, index) => {
           return (
             <Stage
               size={30}

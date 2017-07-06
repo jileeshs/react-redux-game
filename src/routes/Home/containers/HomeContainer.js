@@ -1,26 +1,23 @@
 import { connect } from 'react-redux'
-import { moveItem, makeItemActive, createObjects } from '../modules/game'
+import { setNumberOfItems } from '../modules/home'
 
 /*  This is a container component. Notice it does not contain any JSX,
     nor does it import React. This component is **only** responsible for
     wiring in the actions and state necessary to render a presentational
     component - in this case, the counter:   */
 
-import Game from '../components/Game'
+import Home from '../components/HomeView'
 
 /*  Object of action creators (can also be function that returns object).
     Keys will be passed as props to presentational components. Here we are
     implementing our wrapper around increment; the component doesn't care   */
 
 const mapDispatchToProps = {
-  moveItem,
-  makeItemActive,
-  createObjects
+  setNumberOfItems
 }
 
 const mapStateToProps = (state) => ({
-  items: state.game.items,
-  numberOfItems: state.home && state.home.numberOfItems ? state.home.numberOfItems : 0
+  numberOfItems: state.home.numberOfItems
 })
 
 /*  Note: mapStateToProps is where you should use `reselect` to create selectors, ie:
@@ -37,4 +34,4 @@ const mapStateToProps = (state) => ({
     Selectors are composable. They can be used as input to other selectors.
     https://github.com/reactjs/reselect    */
 
-export default connect(mapStateToProps, mapDispatchToProps)(Game)
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
